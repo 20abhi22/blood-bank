@@ -28,3 +28,11 @@ next-env.d.ts
 
 #firebase
 serviceAccountKey.json
+
+
+.next/
+node_modules/
+.env.local
+
+frontend/.next/
+frontend/node_modules/
