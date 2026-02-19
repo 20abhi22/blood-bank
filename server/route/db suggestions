@@ -1,0 +1,47 @@
+suggested :blood_requests Table
+
+CREATE TABLE blood_requests (
+  id SERIAL PRIMARY KEY,
+
+  -- Blood info
+  blood_group_id INTEGER NOT NULL,
+  units_required INTEGER NOT NULL,
+
+  -- Urgency
+  urgency_level VARCHAR(30) NOT NULL, 
+  -- example: 'low', 'medium', 'high', 'critical'
+
+  -- Patient / contact
+  patient_name VARCHAR(150) NOT NULL,
+  contact_person VARCHAR(150) NOT NULL,
+  contact_number VARCHAR(20) NOT NULL,
+  hospital_name VARCHAR(200) NOT NULL,
+
+  -- Optional notes
+  additional_info TEXT,
+
+   -- WHO CREATED THE REQUEST
+  created_by INTEGER NOT NULL,
+
+
+  -- Status flow
+  status VARCHAR(30) DEFAULT 'pending',
+  -- pending | accepted | fulfilled | cancelled
+
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  accepted_at TIMESTAMP,
+  fulfilled_at TIMESTAMP,
+
+  -- (optional) which donor fulfilled it
+  fulfilled_by INTEGER,
+
+  CONSTRAINT fk_fulfilled_by
+    FOREIGN KEY (fulfilled_by)
+    REFERENCES donors(id)
+
+    CONSTRAINT fk_created_by
+    FOREIGN KEY (created_by)
+    REFERENCES users(id),
+
+);
