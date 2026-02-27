@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../config/db.js";
+import getPool from "../config/db.js";
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ router.get("/all", async (req, res) => {
   let client;
   
   try {
-    client = await pool.connect();
+    client = await getPool().connect();
     
     console.log("Attempting to fetch blood requests...");
     
@@ -49,7 +49,7 @@ router.put("/status/:id", async (req, res) => {
   const { status } = req.body;
   
   try {
-    client = await pool.connect();
+    client = await getPool().connect();
     
     const requestId = parseInt(id);
     

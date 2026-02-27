@@ -12,7 +12,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Heart, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react"
 import API from '../../backend/api.jsx'
 import { toast } from "sonner"
-
+import { TermsDialog } from "@/components/ui/terms-dialog"
+import { PrivacyDialog } from "@/components/ui/privacy-dialog"
 export default function LoginPage() {
   const router = useRouter()
   const [checkingAuth, setCheckingAuth] = useState(true)
@@ -201,16 +202,16 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          By signing in, you agree to our{" "}
-          <Link href="/terms" className="underline hover:text-foreground">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="underline hover:text-foreground">
-            Privacy Policy
-          </Link>
-        </p>
+       <p className="mt-8 text-center text-xs text-muted-foreground">
+  By signing in, you agree to our{" "}
+  <TermsDialog trigger={
+    <span className="underline cursor-pointer hover:text-foreground">Terms of Service</span>
+  } />{" "}
+  and{" "}
+  <PrivacyDialog trigger={
+    <span className="underline cursor-pointer hover:text-foreground">Privacy Policy</span>
+  } />
+</p>
       </div>
     </div>
   )

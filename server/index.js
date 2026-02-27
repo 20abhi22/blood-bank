@@ -1,13 +1,23 @@
+
+import dotenv from "dotenv";
+import path from "path";
+
+// Explicitly resolve the path to your .env
+dotenv.config({ path: path.resolve('./.env') });
+console.log("ENV DB_USER:", process.env.DB_USER);
+console.log("ENV DB_PASSWORD:", process.env.DB_PASSWORD);
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
+
 import loginRoutes from "./route/auth.js";
 import masterRoutes from "./route/masters.js";
 import donorRoutes from "./route/donor.js";
 import statsRoutes from "./route/stats.js";
 import requestsRoutes from "./route/requests.js";
+import pool from "./config/db.js";
 
 
 
@@ -23,7 +33,7 @@ app.use(
   cors({
     origin: process.env.CORS_ORIGIN || "*",
     credentials: true,
-  })
+	})
 );
 
 app.use(compression());

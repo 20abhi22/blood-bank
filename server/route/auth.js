@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 const router = express.Router();
-import pool from "../config/db.js";
+import getPool from "../config/db.js";
 import jwt from "jsonwebtoken";
 
 
@@ -16,7 +16,7 @@ router.post("/register", async (req, res, next) => {
       });
     }
 
-    const userExists = await pool.query(
+    const userExists = await getPool().query(
       "SELECT id FROM subledger WHERE email = $1",
       [email]
     );
@@ -30,7 +30,7 @@ router.post("/register", async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
+    await getPool().query(
       `INSERT INTO subledger
        (name, email, phone, password, created_at, is_active)
        VALUES ($1, $2, $3, $4, NOW(), 'Y')`,
@@ -62,7 +62,7 @@ router.post("/register", async (req, res, next) => {
 //       });
 //     }
 
-//     const user = await pool.query(
+//     const user = await getPool().query(
 //       "SELECT * FROM subledger WHERE email = $1 AND is_active = 'Y'",
 //       [email]
 //     );
@@ -113,7 +113,7 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    const user = await pool.query(
+    const user = await getPool().query(
       "SELECT * FROM subledger WHERE email = $1 AND is_active = 'Y'",
       [email]
     );

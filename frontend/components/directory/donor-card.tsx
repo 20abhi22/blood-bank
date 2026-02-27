@@ -19,17 +19,17 @@ export function DonorCard({ donor }: any) {
 
   function getDepartment(dept: string) {
     switch (dept) {
-      case "cse":
+      case "CSE":
         return "Computer Science and Engineering"
-      case "eee":
+      case "EEE":
         return "Electrical and Electronics Engineering"
-      case "ece":
+      case "ECE":
         return "Electronics and Communication Engineering"
-      case "me":
+      case "ME":
         return "Mechanical Engineering"
-      case "ce":
+      case "CE":
         return "Civil Engineering"
-      case "bme":
+      case "BME":
         return "Biomedical Engineering"
       default:
         return "Unknown"
@@ -61,15 +61,15 @@ export function DonorCard({ donor }: any) {
                 <h3 className="font-semibold text-foreground">{donor['name']}</h3>
                 {donor['status'] && <Shield className="h-4 w-4 text-accent" aria-label="Verified donor" />}
               </div>
-              <p className="text-sm text-muted-foreground">{getDepartment(donor['department'])}</p>
+              <p className="text-sm text-muted-foreground">{getDepartment(donor['department_name'])}</p>
             </div>
           </div>
 
           <Badge
-            variant={donor['available'] === 'Y' ? "default" : "secondary"}
-            className={donor['available'] === 'Y' ? "bg-accent text-accent-foreground" : ""}
+            variant={donor['is_available'] === 'Y' ? "default" : "secondary"}
+            className={donor['is_available'] === 'Y' ? "bg-accent text-accent-foreground" : ""}
           >
-            {donor['available'] === 'Y' ? "Available" : "Unavailable"}
+            {donor['is_available'] === 'Y' ? "Available" : "Unavailable"}
           </Badge>
         </div>
 

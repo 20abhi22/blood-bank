@@ -3,7 +3,7 @@ import axios from "axios";
 class API {
   constructor() {
     this.client = axios.create({
-      baseURL: "http://localhost:5000",
+      baseURL: "http://18.60.108.61",
       timeout: 20000,
       headers: {
         "Content-Type": "application/json",
@@ -132,6 +132,9 @@ class API {
 
 updateRequestStatus(id, status) {
   return this.client.put(`/api/requests/status/${id}`, { status });
+}
+checkDonorRegistration() {
+  return this.client.get("/api/donors/check");
 }
 
 

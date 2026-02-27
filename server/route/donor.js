@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import pool from "../config/db.js";
+import getPool from "../config/db.js";
 import verifyToken from "../middleware/verifyToken.js";
 
 
@@ -8,7 +8,7 @@ router.get("/all", async (req, res) => {
   let client;
 
   try {
-    client = await pool.connect();
+    client = await getPool().connect();
 
     const result = await client.query(
       'SELECT * FROM donors ORDER BY created_at DESC'
@@ -57,7 +57,7 @@ router.post("/donor/add", verifyToken, async (req, res) => {
       });
     }
 
-    const emailCheck = await pool.query(
+    const emailCheck = await getPool().query(
       "SELECT id FROM donors WHERE email = $1 AND is_active = 'Y'",
       [email]
     );
@@ -69,7 +69,7 @@ router.post("/donor/add", verifyToken, async (req, res) => {
     //   });
     // }
 
-    const result = await pool.query(
+    const result = await getPool().query(
       `INSERT INTO donors (
         name,
         email,
@@ -201,7 +201,7 @@ router.post("/donor/add", verifyToken, async (req, res) => {
 //     console.log("PARAMS:", queryParams);
 
 
-//     const result = await pool.query(query, queryParams);
+//     const result = await getPool().query(query, queryParams);
 
 //     res.json({
 //       status: "success",
@@ -312,7 +312,7 @@ router.get("/getdonor", verifyToken, async (req, res) => {
     console.log("FINAL QUERY:", query);
     console.log("PARAMS:", queryParams);
 
-    const result = await pool.query(query, queryParams);
+    const result = await getPool().query(query, queryParams);
 
     res.json({
       status: "success",
@@ -333,7 +333,7 @@ router.get("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
+    const result = await getPool().query(
       `SELECT
         d.*,
         bg.name as blood_group_name,
@@ -441,7 +441,7 @@ router.get("/:id", verifyToken, async (req, res) => {
 // console.log("PARAMS:", queryParams);
 
 
-//     const result = await pool.query(query, queryParams);
+//     const result = await getPool().query(query, queryParams);
 
 //     res.json({
 //       status: "success",
@@ -481,7 +481,7 @@ router.put("/:id", verifyToken, async (req, res) => {
       phone,
     } = req.body;
 
-    const result = await pool.query(
+    const result = await getPool().query(
       `UPDATE donors SET
         name = COALESCE($1, name),
         email = COALESCE($2, email),
@@ -553,7 +553,7 @@ router.put("/status/:id", async (req, res) => {
   const { status } = req.body;
   
   try {
-    client = await pool.connect();
+    client = await getPool().connect();
     
     const result = await client.query(
       'UPDATE donors SET status = $1 WHERE id = $2 RETURNING *',
@@ -583,7 +583,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
+    const result = await getPool().query(
       "UPDATE donors SET is_active = 'N' WHERE id = $1 AND is_active = 'Y' RETURNING id",
       [id]
     );
@@ -621,7 +621,7 @@ router.patch("/:id/availability", verifyToken, async (req, res) => {
       });
     }
 
-    const result = await pool.query(
+    const result = await getPool().query(
       "UPDATE donors SET available = $1 WHERE id = $2 AND is_active = 'Y' RETURNING *",
       [available, id]
     );
@@ -652,7 +652,7 @@ router.patch("/:id/approve", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
+    const result = await getPool().query(
       "UPDATE donors SET status = 'A' WHERE id = $1 AND is_active = 'Y' RETURNING *",
       [id]
     );
@@ -683,7 +683,7 @@ router.patch("/:id/reject", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
+    const result = await getPool().query(
       "UPDATE donors SET status = 'R' WHERE id = $1 AND is_active = 'Y' RETURNING *",
       [id]
     );
@@ -778,7 +778,7 @@ router.post("/blood_requests", verifyToken, async (req, res) => {
       created_by,
     ];
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
 
     res.status(201).json({
       status: "success",
@@ -820,24 +820,16 @@ router.post("/blood_requests", verifyToken, async (req, res) => {
 // to check
 
 
-router.get("/check", verifyToken, async (req, res) => {
+router.get("/check", verifyToken, async (req, res, next) => {
   try {
-    const userId = req.user.id;
-
-    const result = await pool.query(
-      "SELECT id FROM donors WHERE created_by = $1",
-      [userId]
+    const result = await getPool().query(
+      "SELECT id FROM donors WHERE email = $1 AND is_active = 'Y'",
+      [req.user.email]
     );
-
-    res.json({
-      isDonor: result.rows.length > 0,
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
+    return res.json({ isRegistered: result.rows.length > 0 });
+  } catch (err) { next(err); }
 });
+
 
 
 

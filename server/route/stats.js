@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../config/db.js";
+import getPool from "../config/db.js";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.get("/about", async (req, res) => {
           AS fulfillment_rate;
     `;
 
-    const result = await pool.query(query);
+    const result = await getPool().query(query);
 
     res.json(result.rows[0]);
 
@@ -42,7 +42,7 @@ router.get("/admin", async (req, res) => {
        let client;
   try {
  
-    client = await pool.connect();
+    client = await getPool().connect();
     
     const [totalDonors, pendingRequest, availableDonors,totalDonations] = await Promise.all([
      client.query(

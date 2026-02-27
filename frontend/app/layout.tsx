@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Toaster } from "sonner"
 
@@ -54,7 +53,6 @@ export default function RootLayout({
             },
           }}
         />
-        <Analytics />
       </body>
     </html>
   )

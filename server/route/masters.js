@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import pool from "../config/db.js";
+import getPool from "../config/db.js";
 
 const MASTER_TABLES = {
   bloodgroup: "bloodgroup",
@@ -36,7 +36,7 @@ router.post("/add", async (req, res) => {
       RETURNING *
     `
 
-    const result = await pool.query(query, [name])
+    const result = await getPool().query(query, [name])
 
     res.status(201).json({
       status: "success",
@@ -58,7 +58,7 @@ router.put("/edit", async (req, res) => {
 
     const table = MASTER_TABLES[table_name]
 
-    const result = await pool.query(
+    const result = await getPool().query(
       `UPDATE ${table}
        SET name = $1
        WHERE id = $2
@@ -85,7 +85,7 @@ router.delete("/delete", async (req, res) => {
 
     const table = MASTER_TABLES[table_name]
 
-    await pool.query(
+    await getPool().query(
       `UPDATE ${table}
        SET is_active = 'N'
        WHERE id = $1`,
@@ -112,7 +112,7 @@ router.get("/list/:table_name", async (req, res) => {
 
     const table = MASTER_TABLES[table_name]
 
-    const result = await pool.query(
+    const result = await getPool().query(
       `SELECT * FROM ${table} WHERE is_active = 'Y' ORDER BY id`
     )
 
